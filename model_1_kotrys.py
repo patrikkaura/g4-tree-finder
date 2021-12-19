@@ -10,24 +10,27 @@ Original file is located at
 from google.colab import drive
 from typing import List
 import numpy as np
-import pandas as pd
 import csv
-from collections import defaultdict
 import io
+from typing import Tuple
 
-converted_sequences: List[List[int]] = []
-g4 = []
-def sequence_convertor(sequence_path: str) -> None:
+def sequence_convertor(sequence_path: str) -> Tuple[np.array, np.array]:
+  """
+  Transform raw sequences into encoded numpy array
+  :param sequence_path: ....
+  :return: encoded numpy arrays
+  """
   with open(sequence_path) as g4_csv:
     next(g4_csv)
     g4_reader = csv.reader(g4_csv, delimiter=',')
-    sequences = [] 
+    sequences = []
+    converted_sequences: List[List[int]] = []
+    g4 = []
     for row in g4_reader:
         sequences.append(row[1])
         g4.append(row[2])
 
-    for i in range(0, len(g4)):
-        g4[i] = int(g4[i])
+    g4 = [int(flag) for flag in g4]
 
     for sequence in sequences:
       converted = []
@@ -41,8 +44,6 @@ def sequence_convertor(sequence_path: str) -> None:
             converted.append(0)
 
       converted_sequences.append(converted)
+    return np.array(converted_sequences), np.array(g4)
 
-sequence_convertor('drive/MyDrive/dataset/generated_quadruplexes.csv')
-
-np_con_sequences = np.array(converted_sequences)
-np_g4 = np.array(g4)
+[np_con_sequences, np_g4] = sequence_convertor('drive/MyDrive/dataset/generated_quadruplexes.csv')
